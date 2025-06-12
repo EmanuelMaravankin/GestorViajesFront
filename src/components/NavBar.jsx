@@ -48,9 +48,13 @@ export default function Navbar() {
   <div className="flex items-center gap-6 text-sm font-medium text-gray-200">
     {user ? (
       <>
+      {location.pathname !== "/profile" ?(
         <Link to="/profile" className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
           <FaUser /> Perfil
-        </Link>
+        </Link>):(
+          <Link to="/" className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
+          <FaUser /> Home
+          </Link>)}
         <button onClick={handleLogout} className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
           <FaSignOutAlt /> Salir
         </button>

@@ -1,107 +1,121 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../auth/authClient";
 
 export default function Profile() {
-    const [session, setSession] = useState(null);
-    const navigate = useNavigate();
+  const [session, setSession] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
-    useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-        });
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) fetchAvatarFromProfile(session.user.id);
+    });
 
-        const { data: listener } = supabase.auth.onAuthStateChange(
-            (_event, session) => {
-                setSession(session);
-            },
-        );
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session?.user) fetchAvatarFromProfile(session.user.id);
+    });
 
-        return () => {
-            listener.subscription.unsubscribe();
-        };
-    }, []);
-
-    const handleSubmit = async () => {
-        await supabase.auth.signOut();
-        setSession(null);
-        navigate("/");
+    return () => {
+      listener.subscription.unsubscribe();
     };
+  }, []);
 
+  const fetchAvatarFromProfile = async (userId) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("avatar_url")
+      .eq("id", userId)
+      .single();
+
+    if (data?.avatar_url) {
+      setAvatarUrl(data.avatar_url);
+    }
+  };
+
+
+
+  const handleUpload = async (event) => {
+  const file = event.target.files[0]; // ✅ esta línea define 'file'
+
+  if (!file || !session?.user?.id) {
+    console.error("Archivo o sesión no disponible");
+    return;
+  }
+
+  const filePath = `${session.user.id}/avatar.png`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("avatarpnt2")
+    .upload(filePath, file, { upsert: true });
+
+  if (uploadError) {
+    console.error("Error al subir imagen:", uploadError);
+    alert("Error al subir la imagen.");
+    return;
+  }
+
+  const { data: publicUrlData } = supabase
+    .storage
+    .from("avatarpnt2")
+    .getPublicUrl(filePath);
+
+  const publicUrl = publicUrlData?.publicUrl;
+
+  if (publicUrl) {
+    await supabase
+      .from("profiles")
+      .upsert({ id: session.user.id, avatar_url: publicUrl }, { onConflict: ["id"] });
+    setAvatarUrl(publicUrl);
+  }
+};
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setSession(null);
+    navigate("/");
+  };
+
+  if (!session) {
     return (
-        <div className="flex min-h-screen flex-1 flex-col items-center justify-center px-6 py-12 bg-gray-900">
-            <div className="w-full max-w-md space-y-8">
-                <div className="text-center">
-                    <img
-                        className="mx-auto h-16 w-16 rounded-full border-2 border-indigo-500"
-                        src="https://via.placeholder.com/150"
-                        alt="User Avatar"
-                    />
-                    <h2 className="text-sm text-gray-400">
-                        Bienvenido {session.user.email}
-                    </h2>
-                </div>
-
-                <form className="space-y-6">
-                    <div>
-                        <label
-                            htmlFor="name"
-                            className="block text-sm font-medium text-white"
-                        >
-                            Full Name
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            autoComplete="name"
-                            className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder-gray-400 outline-1 -outline-offset-1 outline-gray-600 focus:outline-2 focus:outline-indigo-400"
-                        />
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor="email"
-                            className="block text-sm font-medium text-white"
-                        >
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            autoComplete="email"
-                            className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder-gray-400 outline-1 -outline-offset-1 outline-gray-600 focus:outline-2 focus:outline-indigo-400"
-                        />
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor="bio"
-                            className="block text-sm font-medium text-white"
-                        >
-                            Bio
-                        </label>
-                        <textarea
-                            id="bio"
-                            name="bio"
-                            rows="3"
-                            className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder-gray-400 outline-1 -outline-offset-1 outline-gray-600 focus:outline-2 focus:outline-indigo-400"
-                            placeholder="Tell us something about yourself..."
-                        ></textarea>
-                    </div>
-
-                    <div>
-                        <button
-                            type="button"
-                            onClick={handleSubmit}
-                            className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
-                        >
-                            Sign Out
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
+        <p>Cargando perfil...</p>
+      </div>
     );
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white px-6 py-12">
+      <div className="text-center">
+        <img
+          src={avatarUrl || "https://i.pravatar.cc/150?u=default"}
+          alt="User Avatar"
+          className="mx-auto h-24 w-24 rounded-full border-2 border-indigo-500 object-cover"
+        />
+        <h2 className="mt-4 text-sm text-blue-400">
+          Bienvenido {session.user.email}
+        </h2>
+
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleUpload}
+        />
+
+        <div className="mt-4 flex gap-4 justify-center">
+          <button
+            onClick={() => fileInputRef.current.click()}
+            className="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold hover:bg-indigo-500"
+          >
+            Cambiar imagen
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }

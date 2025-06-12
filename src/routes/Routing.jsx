@@ -5,6 +5,8 @@ import Profile from "../components/Profile";
 import Signup from "../components/SignUp";
 import Home from '../components/Home';
 import Confirmado from "../components/Confirmado";
+import Vuelos from "../components/Vuelos";
+
 
 
 
@@ -16,7 +18,7 @@ const Routing = () => {
 				<Route path="/login" element={<Login />} />
 				<Route path="/profile" element={<Profile />} />
 				<Route path="/signup" element={<Signup />} />
-				<Route path="/vuelos" element={<div className="text-white p-10">Página de búsqueda de vuelos</div>} />
+				<Route path="/vuelos" element={<Vuelos/>} />
 				<Route path="/confirmado" element={<Confirmado />} />
 
 			</Routes>
