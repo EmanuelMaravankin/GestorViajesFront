@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../auth/authClient";
+import { Link } from "react-router-dom";
+
 
 export default function Profile() {
   const [session, setSession] = useState(null);
@@ -114,6 +116,17 @@ export default function Profile() {
           >
             Cambiar imagen
           </button>
+
+           <Link to="/vuelos" className="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold hover:bg-indigo-500"
+          >
+            Mis vuelos
+          </Link>
+
+           
+           <Link to="/vuelos" className="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold hover:bg-indigo-500"
+          >
+            Buscar vuelos
+          </Link>
         </div>
       </div>
     </div>
