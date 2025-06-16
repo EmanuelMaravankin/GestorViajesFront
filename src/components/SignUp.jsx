@@ -44,7 +44,7 @@ return(
   >
     <div className="bg-gray-900 bg-opacity-80 p-8 rounded-lg shadow-lg sm:max-w-sm w-full">
       <h2 className="text-center text-2xl font-bold tracking-tight text-white mb-6">
-        Sign up to Aviones
+        Registrarse
       </h2>
 
       {errorMsg && (
@@ -53,48 +53,75 @@ return(
         </div>
       )}
 
-      {successMsg && (
-        <div className="mb-4 rounded-md border border-green-500 bg-green-100 px-4 py-2 text-sm text-green-800">
-          {successMsg}
-        </div>
-      )}
-
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-white">
-            Email address
+          <label htmlFor="nombre" className="block text-sm font-medium text-white">
+            Nombre
           </label>
           <input
-            ref={emailRef}
+            id="nombre"
+            name="nombre"
+            type="text"
+            required
+            className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="apellido" className="block text-sm font-medium text-white">
+            Apellido
+          </label>
+          <input
+            id="apellido"
+            name="apellido"
+            type="text"
+            required
+            className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            value={apellido}
+            onChange={(e) => setApellido(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-white">
+            Correo Electrónico
+          </label>
+          <input
             id="email"
             name="email"
             type="email"
             required
             autoComplete="email"
             className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-white">
-            Password
+            Contraseña
           </label>
           <input
-            ref={passwordRef}
             id="password"
             name="password"
             type="password"
             required
-            autoComplete="current-password"
+            autoComplete="new-password"
             className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
         <button
           type="submit"
-          className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          disabled={loading}
+          className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50"
         >
-          Sign Up
+          {loading ? "Registrando..." : "Registrarse"}
         </button>
       </form>
     </div>

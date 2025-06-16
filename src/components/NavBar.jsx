@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt, FaPlane } from 'react-icons/fa';
+import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt, FaPlane, FaHotel, FaTachometerAlt } from 'react-icons/fa';
 import { supabase } from '../features/auth/authClient';
 import { useLocation } from 'react-router-dom';
 
@@ -48,16 +48,25 @@ export default function Navbar() {
   <div className="flex items-center gap-6 text-sm font-medium text-gray-200">
     {user ? (
       <>
-      {location.pathname !== "/profile" ?(
-        <Link to="/profile" className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
-          <FaUser /> Perfil
-        </Link>):(
-          <Link to="/" className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
-          <FaUser /> Home
-          </Link>)}
-        <button onClick={handleLogout} className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
-          <FaSignOutAlt /> Salir
-        </button>
+        <Link to="/dashboard" className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
+          <FaTachometerAlt /> Dashboard
+        </Link>
+        <Link to="/vuelos" className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
+          <FaPlane /> Vuelos
+        </Link>
+        <Link to="/hoteles" className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
+          <FaHotel /> Hoteles
+        </Link>
+        {location.pathname !== "/profile" ?(
+          <Link to="/profile" className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
+            <FaUser /> Perfil
+          </Link>):(
+            <Link to="/" className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
+            <FaUser /> Home
+            </Link>)}
+          <button onClick={handleLogout} className="text-blue-900 hover:text-blue-600 font-semibold flex items-center gap-1">
+            <FaSignOutAlt /> Salir
+          </button>
       </>
     ) : (
       <>
