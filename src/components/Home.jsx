@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { supabase } from '../auth/authClient';
+import { supabase } from '../features/auth/authClient';
 
 export default function Home() {
   const [user, setUser] = useState(null);

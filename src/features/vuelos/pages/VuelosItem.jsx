@@ -1,29 +1,18 @@
 import { useState } from "react";
+import { obtenerVuelos } from "../../vuelos/service/vuelo.service.js";
 
-export default function BuscadorDeVuelos() {
-  const [origen, setOrigen] = useState("EZE"); 
-  const [destino, setDestino] = useState("MIA"); 
+export default function VuelosItem() {
+  const [origen, setOrigen] = useState("EZE");
+  const [destino, setDestino] = useState("MIA");
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const TOKEN = "f75b8ddb82e8e5071987100a29dabab0"; 
 
   const buscarVuelos = async () => {
     setLoading(true);
     setResultados([]);
 
     try {
-      const res = await fetch(
-        `https://api.travelpayouts.com/v2/prices/latest?currency=usd&origin=${origen}&destination=${destino}`,
-        {
-          headers: {
-            "X-Access-Token": TOKEN,
-            Accept: "application/json",
-          },
-        }
-      );
-
-      const data = await res.json();
+      const data = await obtenerVuelos(origen, destino);
       console.log("Respuesta:", data);
 
       if (data.success && data.data.length > 0) {
@@ -42,6 +31,7 @@ export default function BuscadorDeVuelos() {
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-white">
       <h2 className="text-xl font-bold mb-4">Buscar vuelos</h2>
+
       <div className="flex gap-4 mb-6">
         <input
           value={origen}
