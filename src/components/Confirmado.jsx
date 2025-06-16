@@ -13,8 +13,7 @@ export default function SignInSuccess() {
         <p className="text-gray-800 mb-6">
           Por favor, revisá tu correo electrónico y confirmá tu cuenta antes de iniciar sesión.
         </p>
-        <Link
-          to="/login"
+        <Link to="/login"
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded transition"
         >
           Ir al login

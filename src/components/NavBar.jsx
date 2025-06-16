@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt, FaPlane } from 'react-icons/fa';
-import { supabase } from '../auth/authClient';
+import { supabase } from '../features/auth/authClient';
 import { useLocation } from 'react-router-dom';
 
 

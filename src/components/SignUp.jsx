@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { supabase } from "../auth/authClient";
+import { supabase } from "../features/auth/authClient";
 
 const avion = "../../Avion.png";
 
