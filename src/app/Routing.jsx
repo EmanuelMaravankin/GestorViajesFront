@@ -11,7 +11,6 @@ import HotelesContainer from "../features/hoteles/components/HotelesContainer";
 import DashboardContainer from "../features/dashboard/components/DashboardContainer";
 import ProtectedRoute from "../routes/ProtectedRoute";
 
-
 const Routing = () => {
   return (
     <div>

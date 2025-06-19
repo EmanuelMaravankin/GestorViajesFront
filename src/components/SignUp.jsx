@@ -1,49 +1,35 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../features/auth/authClient";
-
-const avion = "../../Avion.png";
+import { useAuth } from "../hooks/useAuth.jsx";
 
 export default function SignUp() {
-  const navigate = useNavigate();
-
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [successMsg, setSuccessMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { registrar } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMsg(null);
-    setSuccessMsg(null);
     setLoading(true);
+    setErrorMsg(null);
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          nombre,
-          apellido,
-        },
-      },
-    });
-
-    if (error) {
-      setErrorMsg(error.message);
-    } else {
-      setSuccessMsg(`${data.user.email} ha hecho sign up`);
-      setNombre("");
-      setApellido("");
-      setEmail("");
-      setPassword("");
+    try {
+      await registrar({
+        nombre,
+        apellido,
+        email,
+        password
+      });
       navigate("/confirmado");
+    } catch (error) {
+      setErrorMsg("Error al registrar usuario. Por favor, inténtalo de nuevo.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -137,3 +123,4 @@ export default function SignUp() {
     </div>
   );
 }
+
