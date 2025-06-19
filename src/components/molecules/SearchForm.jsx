@@ -10,12 +10,11 @@ const SearchForm = ({
   className = '' 
 }) => {
   const [formData, setFormData] = useState({
-    origen: initialValues.origen || '',
-    destino: initialValues.destino || '',
-    fechaSalida: initialValues.fechaSalida || '',
-    fechaRegreso: initialValues.fechaRegreso || '',
-    pasajeros: initialValues.pasajeros || 1,
-    ...initialValues
+    origen: initialValues?.origen || '',
+    destino: initialValues?.destino || '',
+    fechaSalida: initialValues?.fechaSalida || '',
+    fechaRegreso: initialValues?.fechaRegreso || '',
+    pasajeros: initialValues?.pasajeros || 1
   });
 
   const [errors, setErrors] = useState({});
@@ -26,8 +25,7 @@ const SearchForm = ({
       ...prev,
       [name]: value
     }));
-    
-    // Limpiar error del campo cuando el usuario empiece a escribir
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -38,23 +36,23 @@ const SearchForm = ({
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.origen.trim()) {
       newErrors.origen = 'El origen es requerido';
     }
-    
+
     if (!formData.destino.trim()) {
       newErrors.destino = 'El destino es requerido';
     }
-    
-    if (formData.origen === formData.destino) {
+
+    if (formData.origen === formData.destino && formData.origen !== '') {
       newErrors.destino = 'El destino debe ser diferente al origen';
     }
-    
+
     if (!formData.fechaSalida) {
       newErrors.fechaSalida = 'La fecha de salida es requerida';
     }
-    
+
     if (formData.pasajeros < 1 || formData.pasajeros > 9) {
       newErrors.pasajeros = 'El número de pasajeros debe estar entre 1 y 9';
     }
@@ -65,14 +63,14 @@ const SearchForm = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (validateForm()) {
+
+    if (validateForm() && typeof onSearch === 'function') {
       onSearch(formData);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
+    <form onSubmit={handleSubmit} className={`space-y-4 mt-20 ${className}`}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           name="origen"
@@ -83,7 +81,7 @@ const SearchForm = ({
           error={errors.origen}
           required
         />
-        
+
         <Input
           name="destino"
           label="Destino"
@@ -105,7 +103,7 @@ const SearchForm = ({
           error={errors.fechaSalida}
           required
         />
-        
+
         <Input
           type="date"
           name="fechaRegreso"
@@ -113,7 +111,7 @@ const SearchForm = ({
           value={formData.fechaRegreso}
           onChange={handleChange}
         />
-        
+
         <Input
           type="number"
           name="pasajeros"
