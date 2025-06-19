@@ -1,6 +1,5 @@
-import { useState, useEffect, createContext, useContext } from 'react';
-import { post } from '../services/apiClient';
-
+import { useState, useEffect, createContext, useContext } from "react";
+import { supabase } from "../features/auth/authClient";
 
 const AuthContext = createContext(null);
 
@@ -8,50 +7,53 @@ export const AuthProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(null);
   const [cargando, setCargando] = useState(true);
 
-
   useEffect(() => {
-    const verificarSesion = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const datosUsuario = await post('/auth/verificar', {}, true);
-          setUsuario(datosUsuario);
-        } catch (error) {
-          console.error('Error verificando sesión:', error);
-          localStorage.removeItem('token');
-        }
-      }
+    const obtenerSesion = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUsuario(session?.user || null);
       setCargando(false);
     };
 
-    verificarSesion();
+    obtenerSesion();
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      setUsuario(session?.user || null);
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
-
   const login = async (email, password) => {
-    try {
-      const respuesta = await post('/auth/login', { email, password }, false);
-      localStorage.setItem('token', respuesta.token);
-      setUsuario(respuesta.usuario);
-      return respuesta;
-    } catch (error) {
-      throw error;
-    }
+    const { error, data } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) throw error;
+    return data;
   };
 
-
-  const logout = () => {
-    localStorage.removeItem('token');
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUsuario(null);
   };
 
   const registrar = async (datosUsuario) => {
-    try {
-      const respuesta = await post('/auth/registrar', datosUsuario, false);
-      return respuesta;
-    } catch (error) {
-      throw error;
-    }
+    const { data, error } = await supabase.auth.signUp({
+      email: datosUsuario.email,
+      password: datosUsuario.password,
+      options: {
+        data: {
+          nombre: datosUsuario.nombre,
+          apellido: datosUsuario.apellido,
+        },
+      },
+    });
+
+    if (error) throw error;
+    return data;
   };
 
   return (
@@ -63,8 +65,7 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth debe usarse dentro de un AuthProvider');
-  }
+  if (!context) throw new Error("useAuth debe usarse dentro de un AuthProvider");
   return context;
 };
+
