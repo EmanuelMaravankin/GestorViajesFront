@@ -9,7 +9,8 @@ import VuelosContainer from "../features/vuelos/components/VuelosContainer";
 import ClientesList from "../features/clientes/pages/ClientesList";
 import HotelesContainer from "../features/hoteles/components/HotelesContainer";
 import DashboardContainer from "../features/dashboard/components/DashboardContainer";
-import ProtectedRoute from "./ProtectedRoute";
+import ProtectedRoute from "../routes/ProtectedRoute";
+
 
 const Routing = () => {
   return (

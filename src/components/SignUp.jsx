@@ -1,130 +1,139 @@
-import { useRef, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../features/auth/authClient";
 
 const avion = "../../Avion.png";
 
 export default function SignUp() {
-	const emailRef = useRef(null);
-	const passwordRef = useRef(null);
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
-	const [errorMsg, setErrorMsg] = useState(null);
-	const [successMsg, setSuccessMsg] = useState(null);
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    setLoading(true);
 
-		const email = emailRef.current.value;
-		const password = passwordRef.current.value;
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          nombre,
+          apellido,
+        },
+      },
+    });
 
-		setErrorMsg(null);
-		setSuccessMsg(null);
+    if (error) {
+      setErrorMsg(error.message);
+    } else {
+      setSuccessMsg(`${data.user.email} ha hecho sign up`);
+      setNombre("");
+      setApellido("");
+      setEmail("");
+      setPassword("");
+      navigate("/confirmado");
+    }
 
-		const { data, error } = await supabase.auth.signUp({
-			email,
-			password,
-		});
+    setLoading(false);
+  };
 
-		if (error) {
-			setErrorMsg(error.message);
-		} else {
-			setSuccessMsg(`${data.user.email} ha hecho sign up`);
+  return (
+    <div
+      className="min-h-screen bg-cover bg-center flex items-center justify-center px-6 py-12"
+      style={{ backgroundImage: "url('/Avion.png')" }}
+    >
+      <div className="bg-gray-900 bg-opacity-80 p-8 rounded-lg shadow-lg sm:max-w-sm w-full">
+        <h2 className="text-center text-2xl font-bold tracking-tight text-white mb-6">
+          Registrarse
+        </h2>
 
-			emailRef.current.value = "";
-			passwordRef.current.value = "";
+        {errorMsg && (
+          <div className="mb-4 rounded-md border border-red-500 bg-red-100 px-4 py-2 text-sm text-red-800">
+            {errorMsg}
+          </div>
+        )}
 
-			navigate("/confirmado");
-		}
-	};
-return(
-	 <div
-    className="min-h-screen bg-cover bg-center flex items-center justify-center px-6 py-12"
-    style={{ backgroundImage: "url('/Avion.png')" }}
-  >
-    <div className="bg-gray-900 bg-opacity-80 p-8 rounded-lg shadow-lg sm:max-w-sm w-full">
-      <h2 className="text-center text-2xl font-bold tracking-tight text-white mb-6">
-        Registrarse
-      </h2>
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="nombre" className="block text-sm font-medium text-white">
+              Nombre
+            </label>
+            <input
+              id="nombre"
+              name="nombre"
+              type="text"
+              required
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
 
-      {errorMsg && (
-        <div className="mb-4 rounded-md border border-red-500 bg-red-100 px-4 py-2 text-sm text-red-800">
-          {errorMsg}
-        </div>
-      )}
+          <div>
+            <label htmlFor="apellido" className="block text-sm font-medium text-white">
+              Apellido
+            </label>
+            <input
+              id="apellido"
+              name="apellido"
+              type="text"
+              required
+              value={apellido}
+              onChange={(e) => setApellido(e.target.value)}
+              className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="nombre" className="block text-sm font-medium text-white">
-            Nombre
-          </label>
-          <input
-            id="nombre"
-            name="nombre"
-            type="text"
-            required
-            className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-          />
-        </div>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-white">
+              Correo Electrónico
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="apellido" className="block text-sm font-medium text-white">
-            Apellido
-          </label>
-          <input
-            id="apellido"
-            name="apellido"
-            type="text"
-            required
-            className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={apellido}
-            onChange={(e) => setApellido(e.target.value)}
-          />
-        </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-white">
+              Contraseña
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-white">
-            Correo Electrónico
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-white">
-            Contraseña
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            autoComplete="new-password"
-            className="mt-1 block w-full rounded-md bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50"
-        >
-          {loading ? "Registrando..." : "Registrarse"}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50"
+          >
+            {loading ? "Registrando..." : "Registrarse"}
+          </button>
+        </form>
+      </div>
     </div>
-  </div>
-);
+  );
 }
