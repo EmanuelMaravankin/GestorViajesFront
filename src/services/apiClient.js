@@ -9,7 +9,7 @@ const apiClient = axios.create({
 });
 
 export default apiClient;
-export const apiClient = async (endpoint, method = 'GET', body = null, requiresAuth = true) => {
+export const apiRequest = async (endpoint, method = 'GET', body = null, requiresAuth = true) => {
   const headers = {
     'Content-Type': 'application/json',
   };
@@ -47,7 +47,7 @@ export const apiClient = async (endpoint, method = 'GET', body = null, requiresA
 };
 
 // Métodos específicos para simplificar llamadas
-export const get = (endpoint, requiresAuth = true) => apiClient(endpoint, 'GET', null, requiresAuth);
-export const post = (endpoint, body, requiresAuth = true) => apiClient(endpoint, 'POST', body, requiresAuth);
-export const put = (endpoint, body, requiresAuth = true) => apiClient(endpoint, 'PUT', body, requiresAuth);
-export const del = (endpoint, requiresAuth = true) => apiClient(endpoint, 'DELETE', null, requiresAuth);
+export const get = (endpoint, requiresAuth = true) => apiRequest(endpoint, 'GET', null, requiresAuth);
+export const post = (endpoint, body, requiresAuth = true) => apiRequest(endpoint, 'POST', body, requiresAuth);
+export const put = (endpoint, body, requiresAuth = true) => apiRequest(endpoint, 'PUT', body, requiresAuth);
+export const del = (endpoint, requiresAuth = true) => apiRequest(endpoint, 'DELETE', null, requiresAuth);
