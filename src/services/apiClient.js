@@ -1,16 +1,16 @@
 import axios from 'axios';
-import { API_BASE_URL } from '../config/api';
+//import { API_BASE_URL } from '../config/api';
 
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+//const apiClient = axios.create({
+  //baseURL: API_BASE_URL,
+  //headers: {
+   // 'Content-Type': 'application/json',
+  //},
+//});
 
-export default apiClient;
-export const apiClient = async (endpoint, method = 'GET', body = null, requiresAuth = true) => {
-  const headers = {
+//export default apiClient;
+//export const apiClient = async (endpoint, method = 'GET', body = null, requiresAuth = true) => {
+  /*const headers = {
     'Content-Type': 'application/json',
   };
   
@@ -44,7 +44,7 @@ export const apiClient = async (endpoint, method = 'GET', body = null, requiresA
     console.error('Error en apiClient:', error);
     throw error;
   }
-};
+};*/
 
 // Métodos específicos para simplificar llamadas
 export const get = (endpoint, requiresAuth = true) => apiClient(endpoint, 'GET', null, requiresAuth);
