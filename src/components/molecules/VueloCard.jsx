@@ -42,7 +42,7 @@ const VueloCard = ({
         <div className="flex justify-between items-start">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">
-              {vuelo.airline || vuelo.aerolinea || 'Aerolínea'}
+              {vuelo.gate || vuelo.airline || vuelo.aerolinea || 'Aerolínea'}
             </h3>
             <p className="text-sm text-gray-500">
               {vuelo.flight_number || vuelo.numeroVuelo || 'N/A'}
@@ -70,13 +70,13 @@ const VueloCard = ({
           {/* Origen */}
           <div className="text-center">
             <p className="text-2xl font-bold text-gray-900">
-              {formatTime(vuelo.departure_at || vuelo.fechaHoraSalida)}
+              {formatTime(vuelo.depart_date || vuelo.departure_at || vuelo.fechaHoraSalida)}
             </p>
             <p className="text-sm text-gray-600">
               {vuelo.origin || vuelo.origen || 'Origen'}
             </p>
             <p className="text-xs text-gray-500">
-              {formatDate(vuelo.departure_at || vuelo.fechaHoraSalida)}
+              {formatDate(vuelo.depart_date || vuelo.departure_at || vuelo.fechaHoraSalida)}
             </p>
           </div>
 
@@ -99,13 +99,13 @@ const VueloCard = ({
           {/* Destino */}
           <div className="text-center">
             <p className="text-2xl font-bold text-gray-900">
-              {formatTime(vuelo.return_at || vuelo.fechaHoraLlegada)}
+              {formatTime(vuelo.return_date || vuelo.return_at || vuelo.fechaHoraLlegada)}
             </p>
             <p className="text-sm text-gray-600">
               {vuelo.destination || vuelo.destino || 'Destino'}
             </p>
             <p className="text-xs text-gray-500">
-              {formatDate(vuelo.return_at || vuelo.fechaHoraLlegada)}
+              {formatDate(vuelo.return_date || vuelo.return_at || vuelo.fechaHoraLlegada)}
             </p>
           </div>
         </div>
@@ -114,7 +114,7 @@ const VueloCard = ({
         <div className="flex justify-between items-center pt-2 border-t border-gray-200">
           <div className="flex flex-col">
             <span className="text-2xl font-bold text-blue-600">
-              {formatPrice(vuelo.price || vuelo.costo)}
+              {formatPrice(vuelo.value || vuelo.price || vuelo.costo)}
             </span>
             {vuelo.asientosDisponibles && (
               <span className="text-xs text-gray-500">
