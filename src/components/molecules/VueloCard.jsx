@@ -2,13 +2,13 @@ import React from 'react';
 import Card from '../atoms/Card';
 import Button from '../atoms/Button';
 
-const VueloCard = ({ 
-  vuelo, 
-  onSelect, 
-  onFavorite, 
+const VueloCard = ({
+  vuelo,
+  onSelect,
+  onFavorite,
   isFavorite = false,
   showActions = true,
-  className = '' 
+  className = ''
 }) => {
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -35,6 +35,16 @@ const VueloCard = ({
     }).format(price);
   };
 
+  const formatDuration = (duration) => {
+    const horas = Math.floor(duration / 60);
+    const minutos = duration % 60;
+
+    const horasFormateadas = String(horas).padStart(2, '0');
+    const minutosFormateados = String(minutos).padStart(2, '0');
+
+    return `${horasFormateadas}hs ${minutosFormateados}min`;
+  }
+
   return (
     <Card hover className={`transition-all duration-200 ${className}`}>
       <div className="flex flex-col space-y-4">
@@ -45,18 +55,17 @@ const VueloCard = ({
               {vuelo.gate || vuelo.airline || vuelo.aerolinea || 'Aerolínea'}
             </h3>
             <p className="text-sm text-gray-500">
-              {vuelo.flight_number || vuelo.numeroVuelo || 'N/A'}
+              {"N°"+(vuelo.flight_number || vuelo.numeroVuelo || 'N/A')}
             </p>
           </div>
-          
+
           {showActions && (
             <button
               onClick={() => onFavorite && onFavorite(vuelo)}
-              className={`p-2 rounded-full transition-colors ${
-                isFavorite 
-                  ? 'text-red-500 hover:text-red-600' 
+              className={`p-2 rounded-full transition-colors ${isFavorite
+                  ? 'text-red-500 hover:text-red-600'
                   : 'text-gray-400 hover:text-red-500'
-              }`}
+                }`}
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
@@ -70,13 +79,13 @@ const VueloCard = ({
           {/* Origen */}
           <div className="text-center">
             <p className="text-2xl font-bold text-gray-900">
-              {formatTime(vuelo.depart_date || vuelo.departure_at || vuelo.fechaHoraSalida)}
+              {formatDate(vuelo.depart_date || vuelo.departure_at || vuelo.fechaHoraSalida)}
             </p>
             <p className="text-sm text-gray-600">
               {vuelo.origin || vuelo.origen || 'Origen'}
             </p>
             <p className="text-xs text-gray-500">
-              {formatDate(vuelo.depart_date || vuelo.departure_at || vuelo.fechaHoraSalida)}
+              {formatTime(vuelo.depart_date || vuelo.departure_at || vuelo.fechaHoraSalida)}
             </p>
           </div>
 
@@ -91,21 +100,27 @@ const VueloCard = ({
               </div>
               <div className="flex-1 border-t border-gray-300"></div>
             </div>
+            {/* <p className="text-xs text-gray-500 mt-1">
+              {`${vuelo.distance} km`}
+            </p> */}
             <p className="text-xs text-gray-500 mt-1">
-              {vuelo.duration || 'Directo'}
+              {formatDuration(vuelo.duration_to || 'Directo') + " (ida)"}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              {formatDuration(vuelo.duration_back || 'Directo') + " (vuelta)"}
             </p>
           </div>
 
           {/* Destino */}
           <div className="text-center">
             <p className="text-2xl font-bold text-gray-900">
-              {formatTime(vuelo.return_date || vuelo.return_at || vuelo.fechaHoraLlegada)}
+              {formatDate(vuelo.return_date || vuelo.return_at || vuelo.fechaHoraLlegada)}
             </p>
             <p className="text-sm text-gray-600">
               {vuelo.destination || vuelo.destino || 'Destino'}
             </p>
             <p className="text-xs text-gray-500">
-              {formatDate(vuelo.return_date || vuelo.return_at || vuelo.fechaHoraLlegada)}
+              {formatTime(vuelo.return_date || vuelo.return_at || vuelo.fechaHoraLlegada)}
             </p>
           </div>
         </div>

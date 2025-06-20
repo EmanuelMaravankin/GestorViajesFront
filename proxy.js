@@ -6,15 +6,16 @@ import cors from 'cors';
 const app = express();
 const PORT = 3001;
 
-const API_KEY = 'f75b8ddb82e8e5071987100a29dabab0'; 
+const API_KEY = 'f75b8ddb82e8e5071987100a29dabab0';
 
 app.use(cors());
 
 // Ruta proxy para vuelos
 app.get('/api/vuelos', async (req, res) => {
-  const { origin, destination, currency = 'usd' } = req.query;
+  const { origin, destination, currency = 'usd' , direct = false } = req.query;
 
-  const url = `https://api.travelpayouts.com/v2/prices/latest?currency=${currency}&origin=${origin}&destination=${destination}&token=${API_KEY}`;
+  //const url = `https://api.travelpayouts.com/v2/prices/latest?currency=${currency}&origin=${origin}&destination=${destination}&token=${API_KEY}`;
+  const url = `https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin=${origin}&destination=${destination}&unique=false&direct=${direct}&currency=${currency}&limit=30&page=1&one_way=false&token=${API_KEY}`;
 
   try {
     const response = await fetch(url);
