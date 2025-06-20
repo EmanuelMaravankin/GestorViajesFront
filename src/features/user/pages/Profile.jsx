@@ -1,7 +1,8 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import Modal from '../../../components/Modal';
-import { useState } from 'react';
+import Loading from '../../../components/atoms/Loading';
+import { useState, useEffect } from 'react';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -70,6 +71,16 @@ export default function Profile() {
   const [guardando, setGuardando] = useState(false);
   const [foto, setFoto] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simular carga inicial del perfil
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500); // 1.5 segundos de carga
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Cerrar sesión
   const handleSignOut = async () => {
@@ -949,6 +960,15 @@ export default function Profile() {
         return null;
     }
   };
+
+  // Loading inicial del perfil
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <Loading size="lg" text="Cargando perfil..." color="blue" />
+      </div>
+    );
+  }
 
   // Loading
   if (cargando) {
