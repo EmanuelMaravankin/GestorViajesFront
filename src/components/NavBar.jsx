@@ -39,8 +39,10 @@ export default function Navbar() {
     <nav className="bg-white/80 backdrop-blur-sm shadow-md text-blue-900 fixed top-0 left-0 right-0 z-50">
       <div className="w-full px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-2 text-xl font-bold text-blue-600">
-          <FaPlane className="text-blue-500" />
-          AvionesApp
+          <Link to="/" className="flex items-center gap-2 text-xl font-bold text-blue-600">
+            <FaPlane className="text-blue-500" />
+            AvionesApp
+          </Link>
         </div>
         <FaPlane className="animated-plane text-blue-500 absolute top-4 left-[-50px] text-xl z-0" />
 
