@@ -1,8 +1,9 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
-import Modal from '../../../components/Modal';
+import Modal from '../../../components/Modal.jsx';
 import Loading from '../../../components/atoms/Loading';
 import { useState, useEffect } from 'react';
+import { FaUser, FaEnvelope, FaBell, FaBuilding, FaLink } from 'react-icons/fa';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -995,47 +996,77 @@ export default function Profile() {
 
   // Render principal
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gradient-to-tr from-blue-50 to-indigo-100">
       {/* Sidebar */}
-      <aside className="w-64 bg-white rounded-l-xl shadow p-6 text-gray-800">
-        <h2 className="font-semibold text-lg mb-6">User profile management</h2>
-        <ul className="space-y-4">
-          <li 
-            className={`cursor-pointer transition-colors ${activeSection === 'personal' ? 'font-medium text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+      <aside className="w-72 min-h-screen bg-gradient-to-b from-indigo-700 to-blue-600 shadow-xl flex flex-col items-center py-10 px-4">
+        <h2 className="font-bold text-2xl text-white mb-10 tracking-wide">Mi Perfil</h2>
+        <ul className="space-y-4 w-full">
+          <li
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-lg font-medium ${activeSection === 'personal' ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10'}`}
             onClick={() => handleSectionChange('personal')}
           >
-            Informacion Personal
+            <FaUser className="text-2xl" />
+            <span>Perfil</span>
           </li>
-          <li 
-            className={`cursor-pointer transition-colors ${activeSection === 'emails' ? 'font-medium text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+          <li
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-lg font-medium ${activeSection === 'emails' ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10'}`}
             onClick={() => handleSectionChange('emails')}
           >
-            Email
+            <FaEnvelope className="text-2xl" />
+            <span>Email</span>
           </li>
-          <li 
-            className={`cursor-pointer transition-colors ${activeSection === 'notifications' ? 'font-medium text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+          <li
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-lg font-medium ${activeSection === 'notifications' ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10'}`}
             onClick={() => handleSectionChange('notifications')}
           >
-            Notificaciones
+            <FaBell className="text-2xl" />
+            <span>Notificaciones</span>
           </li>
-          <li 
-            className={`cursor-pointer transition-colors ${activeSection === 'businesses' ? 'font-medium text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+          <li
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-lg font-medium ${activeSection === 'businesses' ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10'}`}
             onClick={() => handleSectionChange('businesses')}
           >
-            Empresas
+            <FaBuilding className="text-2xl" />
+            <span>Empresas</span>
           </li>
-          <li 
-            className={`cursor-pointer transition-colors ${activeSection === 'integration' ? 'font-medium text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+          <li
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-lg font-medium ${activeSection === 'integration' ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10'}`}
             onClick={() => handleSectionChange('integration')}
           >
-            Integraciones
+            <FaLink className="text-2xl" />
+            <span>Integraciones</span>
           </li>
         </ul>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 bg-white rounded-r-xl shadow p-10">
-        {renderSection()}
+      <main className="flex-1 flex flex-col bg-white rounded-r-3xl shadow-xl p-0 overflow-auto">
+        {/* Header visual */}
+        <div className="relative bg-gradient-to-r from-indigo-600 to-blue-500 py-12 flex items-center px-16 shadow-md">
+          <div className="absolute left-0 top-0 w-full h-full opacity-10 bg-[url('/Avion.png')] bg-no-repeat bg-right bg-contain pointer-events-none" />
+          <div className="flex items-center gap-8 z-10">
+            <div className="h-32 w-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-200 flex items-center justify-center text-5xl font-bold text-white bg-gradient-to-tr from-indigo-500 to-purple-500">
+              {preview ? (
+                <img src={preview} alt="Preview" className="h-full w-full object-cover" />
+              ) : (
+                <span>{usuario?.nombre?.charAt(0)}{usuario?.apellido?.charAt(0)}</span>
+              )}
+            </div>
+            <div>
+              <h1 className="text-3xl font-extrabold text-white drop-shadow mb-1">{usuario?.nombre} {usuario?.apellido}</h1>
+              <p className="text-lg text-indigo-100 font-medium mb-2">{usuario?.email}</p>
+              <button
+                onClick={handleEditClick}
+                className="bg-white/80 hover:bg-white text-indigo-700 font-semibold px-6 py-2 rounded-lg shadow transition-all border border-indigo-200"
+              >
+                Editar perfil
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 p-10">
+          {renderSection()}
+        </div>
       </main>
 
       {/* Modal de edición */}

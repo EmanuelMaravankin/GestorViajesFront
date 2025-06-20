@@ -1,20 +1,37 @@
-import React from "react";
+import React from 'react';
 
-export default function Modal({ isOpen, onClose, children, title }) {
+export default function Modal({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative animate-modal-in">
         <button
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-2xl font-bold"
           onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-indigo-600 text-2xl font-bold focus:outline-none"
           aria-label="Cerrar"
         >
           &times;
         </button>
-        {title && <h2 className="text-xl font-semibold mb-4 text-gray-800">{title}</h2>}
-        {children}
+        {title && <h2 className="text-2xl font-bold text-indigo-700 mb-6 text-center">{title}</h2>}
+        <div>{children}</div>
       </div>
+      <style>{`
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.2s ease;
+        }
+        @keyframes modal-in {
+          from { transform: translateY(40px) scale(0.98); opacity: 0; }
+          to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .animate-modal-in {
+          animation: modal-in 0.25s cubic-bezier(.4,2,.6,1);
+        }
+      `}</style>
     </div>
   );
 } 
