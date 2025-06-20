@@ -4,10 +4,7 @@ export async function obtenerVuelos(origen, destino) {
   try {
     const res = await fetch(
       //`https://api.travelpayouts.com/v2/prices/latest?currency=usd&origin=${origen}&destination=${destino}`,
-      // Using CORS Anywhere to bypass CORS restrictions
-      // must request temporary access to the CORS proxy: https://cors-anywhere.herokuapp.com/corsdemo
-      `https://cors-anywhere.herokuapp.com/https://api.travelpayouts.com/v2/prices/latest?currency=usd&origin=${origen}&destination=${destino}`,
-
+      `http://localhost:3001/api/vuelos?origin=eze&destination=mad`,
       {
         headers: {
           "X-Access-Token": TOKEN,
