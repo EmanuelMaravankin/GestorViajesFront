@@ -31,6 +31,9 @@ const VuelosPresentation = ({
     <div className="min-h-screen bg-gray-50 py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mt-20 mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Buscar vuelos
+          </h1>
           <p className="text-gray-600">
             Encuentra los mejores vuelos para tu próximo viaje
           </p>

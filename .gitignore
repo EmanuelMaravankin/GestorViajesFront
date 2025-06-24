@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Documentation files (local only)
+FRONTEND_DOCUMENTATION.md
+PWA_IMPLEMENTATION.md

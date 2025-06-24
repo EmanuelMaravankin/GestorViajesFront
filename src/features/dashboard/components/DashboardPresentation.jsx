@@ -42,7 +42,7 @@ const DashboardPresentation = ({
     <div className="min-h-screen bg-gray-50 py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mt-20 mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Mi Dashboard
           </h1>
@@ -57,7 +57,7 @@ const DashboardPresentation = ({
             <div className="flex items-center">
               <div className="flex-1">
                 <p className="text-blue-100 text-sm">Total Reservas</p>
-                <p className="text-3xl font-bold">{estadisticas.totalReservas}</p>
+                <p className="text-3xl font-bold">{estadisticas?.totalReservas || 0}</p>
               </div>
               <div className="text-blue-200">
                 <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -71,7 +71,7 @@ const DashboardPresentation = ({
             <div className="flex items-center">
               <div className="flex-1">
                 <p className="text-green-100 text-sm">Confirmadas</p>
-                <p className="text-3xl font-bold">{estadisticas.reservasConfirmadas}</p>
+                <p className="text-3xl font-bold">{estadisticas?.reservasConfirmadas || 0}</p>
               </div>
               <div className="text-green-200">
                 <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -85,7 +85,7 @@ const DashboardPresentation = ({
             <div className="flex items-center">
               <div className="flex-1">
                 <p className="text-yellow-100 text-sm">Pendientes</p>
-                <p className="text-3xl font-bold">{estadisticas.reservasPendientes}</p>
+                <p className="text-3xl font-bold">{estadisticas?.reservasPendientes || 0}</p>
               </div>
               <div className="text-yellow-200">
                 <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -99,7 +99,7 @@ const DashboardPresentation = ({
             <div className="flex items-center">
               <div className="flex-1">
                 <p className="text-purple-100 text-sm">Total Gastado</p>
-                <p className="text-3xl font-bold">{formatPrice(estadisticas.montoTotalGastado)}</p>
+                <p className="text-3xl font-bold">{formatPrice(estadisticas?.montoTotalGastado || 0)}</p>
               </div>
               <div className="text-purple-200">
                 <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -112,7 +112,7 @@ const DashboardPresentation = ({
         </div>
 
         {/* Próximo viaje */}
-        {estadisticas.proximoViaje && (
+        {estadisticas?.proximoViaje && (
           <Card className="mb-8 bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-200">
             <div className="flex items-center justify-between">
               <div>
@@ -120,9 +120,9 @@ const DashboardPresentation = ({
                   🎉 Próximo Viaje
                 </h3>
                 <p className="text-indigo-700">
-                  <span className="font-medium">{estadisticas.proximoViaje.destino}</span>
+                  <span className="font-medium">{estadisticas?.proximoViaje?.destino}</span>
                   {' • '}
-                  <span>{formatDate(estadisticas.proximoViaje.fechaViaje)}</span>
+                  <span>{formatDate(estadisticas?.proximoViaje?.fechaViaje)}</span>
                 </p>
               </div>
               <Button variant="primary" size="sm">
@@ -148,7 +148,7 @@ const DashboardPresentation = ({
                 </Link>
               </div>
 
-              {reservasRecientes.length === 0 ? (
+              {!reservasRecientes || reservasRecientes.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -204,11 +204,11 @@ const DashboardPresentation = ({
                   Favoritos
                 </h3>
                 <span className="text-sm text-gray-500">
-                  {estadisticas.totalFavoritos}
+                  {estadisticas?.totalFavoritos || 0}
                 </span>
               </div>
 
-              {favoritosRecientes.length === 0 ? (
+              {!favoritosRecientes || favoritosRecientes.length === 0 ? (
                 <div className="text-center py-6 text-gray-500">
                   <svg className="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -241,7 +241,7 @@ const DashboardPresentation = ({
               </h3>
               <div className="space-y-3">
                 <Link to="/vuelos" className="block">
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-center items-center">
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
@@ -250,7 +250,7 @@ const DashboardPresentation = ({
                 </Link>
                 
                 <Link to="/hoteles" className="block">
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-center items-center">
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
@@ -259,7 +259,7 @@ const DashboardPresentation = ({
                 </Link>
 
                 <Link to="/profile" className="block">
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-center items-center">
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
