@@ -3,8 +3,7 @@ const TOKEN = "f75b8ddb82e8e5071987100a29dabab0";
 export async function obtenerVuelos(origen, destino) {
   try {
     const res = await fetch(
-      //`https://api.travelpayouts.com/v2/prices/latest?currency=usd&origin=${origen}&destination=${destino}`,
-      `http://localhost:3001/api/vuelos?origin=eze&destination=mad`,
+      `http://localhost:3001/api/vuelos?origin=${origen}&destination=${destino}`,
       {
         headers: {
           "X-Access-Token": TOKEN,

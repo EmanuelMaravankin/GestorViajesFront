@@ -22,24 +22,87 @@ const DashboardContainer = () => {
     cargarReservas();
   }, [cargarReservas]);
 
+  // Datos de muestra para reservas
+  const reservasMuestra = [
+    {
+      id: 1,
+      origen: 'Buenos Aires',
+      destino: 'Madrid',
+      fechaCreacion: '2025-06-20',
+      fechaViaje: '2025-08-17',
+      estado: 'confirmada',
+      montoTotal: 850
+    },
+    {
+      id: 2,
+      origen: 'Buenos Aires',
+      destino: 'Miami',
+      fechaCreacion: '2025-06-18',
+      fechaViaje: '2025-08-20',
+      estado: 'pendiente',
+      montoTotal: 1200
+    },
+    {
+      id: 3,
+      origen: 'Buenos Aires',
+      destino: 'París',
+      fechaCreacion: '2025-06-15',
+      fechaViaje: '2025-06-10',
+      estado: 'confirmada',
+      montoTotal: 950
+    }
+  ];
+
+  // Datos de muestra para favoritos
+  const favoritosMuestra = [
+    {
+      id: 1,
+      airline: 'Aerolíneas Argentinas',
+      origen: 'EZE',
+      destino: 'MAD',
+      price: 850,
+      fechaAgregado: '2025-06-20'
+    },
+    {
+      id: 2,
+      airline: 'LATAM',
+      origen: 'EZE',
+      destino: 'MIA',
+      price: 1200,
+      fechaAgregado: '2025-06-19'
+    },
+    {
+      id: 3,
+      airline: 'Air France',
+      origen: 'EZE',
+      destino: 'CDG',
+      price: 950,
+      fechaAgregado: '2025-06-18'
+    }
+  ];
+
+  // Usar datos reales si existen, sino usar datos de muestra
+  const reservasActuales = reservas.length > 0 ? reservas : reservasMuestra;
+  const favoritosActuales = favoritos.length > 0 ? favoritos : favoritosMuestra;
+
   // Obtener reservas recientes (últimas 5)
-  const reservasRecientes = reservas
+  const reservasRecientes = reservasActuales
     .sort((a, b) => new Date(b.fechaCreacion) - new Date(a.fechaCreacion))
     .slice(0, 5);
 
   // Obtener vuelos favoritos recientes (últimos 5)
-  const favoritosRecientes = favoritos
+  const favoritosRecientes = favoritosActuales
     .sort((a, b) => new Date(b.fechaAgregado) - new Date(a.fechaAgregado))
     .slice(0, 5);
 
   // Calcular estadísticas del dashboard
   const estadisticasDashboard = {
-    totalReservas: reservas.length,
-    reservasPendientes: reservas.filter(r => r.estado === 'pendiente').length,
-    reservasConfirmadas: reservas.filter(r => r.estado === 'confirmada').length,
-    totalFavoritos: favoritos.length,
-    montoTotalGastado: estadisticasReservas?.montoTotal || 0,
-    proximoViaje: reservas
+    totalReservas: reservasActuales.length,
+    reservasPendientes: reservasActuales.filter(r => r.estado === 'pendiente').length,
+    reservasConfirmadas: reservasActuales.filter(r => r.estado === 'confirmada').length,
+    totalFavoritos: favoritosActuales.length,
+    montoTotalGastado: reservasActuales.reduce((total, r) => total + (r.montoTotal || 0), 0),
+    proximoViaje: reservasActuales
       .filter(r => r.estado === 'confirmada' && r.fechaViaje && new Date(r.fechaViaje) > new Date())
       .sort((a, b) => new Date(a.fechaViaje) - new Date(b.fechaViaje))[0]
   };
