@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
+import { hotelesFallback, ubicacionesFallback } from '../data/fallbackData';
 
 const API_BASE_URL = 'http://localhost:3000/api'; // Ajustar según configuración del backend
+const USE_FALLBACK_DATA = true; // Cambiar a false cuando el backend esté disponible
 
 const useHoteles = () => {
   const [hoteles, setHoteles] = useState([]);
@@ -10,6 +12,14 @@ const useHoteles = () => {
   const [error, setError] = useState(null);
   const [filtros, setFiltros] = useState({});
 
+  // Cargar datos iniciales cuando se usa fallback
+  useEffect(() => {
+    if (USE_FALLBACK_DATA) {
+      setHoteles(hotelesFallback);
+      setHotelesFiltrados(hotelesFallback);
+    }
+  }, []);
+
   // Cargar ubicaciones al inicializar
   useEffect(() => {
     cargarUbicaciones();
@@ -17,14 +27,23 @@ const useHoteles = () => {
 
   // Función para cargar ubicaciones
   const cargarUbicaciones = useCallback(async () => {
+    if (USE_FALLBACK_DATA) {
+      setUbicaciones(ubicacionesFallback);
+      return;
+    }
+    
     try {
       const response = await fetch(`${API_BASE_URL}/ubicaciones`);
       if (response.ok) {
         const data = await response.json();
         setUbicaciones(data);
+      } else {
+        // Fallback en caso de error
+        setUbicaciones(ubicacionesFallback);
       }
     } catch (err) {
       console.error('Error al cargar ubicaciones:', err);
+      setUbicaciones(ubicacionesFallback);
     }
   }, []);
 
@@ -32,6 +51,20 @@ const useHoteles = () => {
   const cargarHoteles = useCallback(async (ubicacionId = null) => {
     setLoading(true);
     setError(null);
+    
+    if (USE_FALLBACK_DATA) {
+      // Simular delay de red
+      setTimeout(() => {
+        let hotelesData = hotelesFallback;
+        if (ubicacionId) {
+          hotelesData = hotelesFallback.filter(hotel => hotel.ubicacion._id === ubicacionId);
+        }
+        setHoteles(hotelesData);
+        setHotelesFiltrados(hotelesData);
+        setLoading(false);
+      }, 500);
+      return;
+    }
     
     try {
       let url = `${API_BASE_URL}/hoteles`;
@@ -50,9 +83,10 @@ const useHoteles = () => {
       }
     } catch (err) {
       console.error('Error al cargar hoteles:', err);
-      setError('Error al cargar hoteles. Por favor, intenta nuevamente.');
-      setHoteles([]);
-      setHotelesFiltrados([]);
+      // Usar datos fallback en caso de error
+      setHoteles(hotelesFallback);
+      setHotelesFiltrados(hotelesFallback);
+      setError('Usando datos de ejemplo (sin conexión al servidor)');
     } finally {
       setLoading(false);
     }
@@ -62,6 +96,51 @@ const useHoteles = () => {
   const buscarHoteles = useCallback(async (criterios) => {
     setLoading(true);
     setError(null);
+    
+    if (USE_FALLBACK_DATA) {
+      // Simular delay de red
+      setTimeout(() => {
+        let hotelesEncontrados = hotelesFallback;
+        
+        // Aplicar filtros del lado cliente con datos fallback
+        if (criterios.ubicacion) {
+          hotelesEncontrados = hotelesEncontrados.filter(
+            hotel => hotel.ubicacion._id === criterios.ubicacion
+          );
+        }
+        
+        if (criterios.precioMin) {
+          hotelesEncontrados = hotelesEncontrados.filter(
+            hotel => hotel.precioPorNoche >= parseFloat(criterios.precioMin)
+          );
+        }
+        
+        if (criterios.precioMax) {
+          hotelesEncontrados = hotelesEncontrados.filter(
+            hotel => hotel.precioPorNoche <= parseFloat(criterios.precioMax)
+          );
+        }
+        
+        if (criterios.estrellas) {
+          hotelesEncontrados = hotelesEncontrados.filter(
+            hotel => hotel.estrellas >= parseInt(criterios.estrellas)
+          );
+        }
+        
+        if (criterios.servicios && criterios.servicios.length > 0) {
+          hotelesEncontrados = hotelesEncontrados.filter(hotel =>
+            criterios.servicios.every(servicio =>
+              hotel.servicios && hotel.servicios.includes(servicio)
+            )
+          );
+        }
+        
+        setHoteles(hotelesEncontrados);
+        setHotelesFiltrados(hotelesEncontrados);
+        setLoading(false);
+      }, 800);
+      return;
+    }
     
     try {
       let url = `${API_BASE_URL}/hoteles`;
@@ -115,9 +194,10 @@ const useHoteles = () => {
       }
     } catch (err) {
       console.error('Error al buscar hoteles:', err);
-      setError('Error al buscar hoteles. Por favor, intenta nuevamente.');
-      setHoteles([]);
-      setHotelesFiltrados([]);
+      // Usar datos fallback en caso de error
+      setHoteles(hotelesFallback);
+      setHotelesFiltrados(hotelesFallback);
+      setError('Usando datos de ejemplo (sin conexión al servidor)');
     } finally {
       setLoading(false);
     }

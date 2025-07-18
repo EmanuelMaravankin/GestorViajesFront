@@ -16,6 +16,7 @@ const DashboardContainer = () => {
   } = useVuelos();
 
   const [datosUsuario, setDatosUsuario] = useState(null);
+  const [mostrarDetallesViaje, setMostrarDetallesViaje] = useState(false);
 
   // Cargar datos al montar el componente
   useEffect(() => {
@@ -31,7 +32,26 @@ const DashboardContainer = () => {
       fechaCreacion: '2025-06-20',
       fechaViaje: '2025-08-17',
       estado: 'confirmada',
-      montoTotal: 850
+      montoTotal: 850,
+      // Detalles adicionales para el próximo viaje
+      aerolinea: 'Iberia',
+      numeroVuelo: 'IB6789',
+      horaSalida: '22:45',
+      horaLlegada: '15:20',
+      duracion: '16h 35m',
+      asiento: '12A',
+      equipaje: '1 maleta incluida',
+      escalas: 'Directo',
+      aeropuertoSalida: 'Aeropuerto Internacional Ezeiza (EZE)',
+      aeropuertoLlegada: 'Aeropuerto Adolfo Suárez Madrid-Barajas (MAD)',
+      codigoReserva: 'IB78945612',
+      pasajero: {
+        nombre: 'Ivan Agustin',
+        apellido: 'Zarate',
+        dni: '12345678',
+        email: 'ivan.agustin.95@gmail.com',
+        telefono: '+54 11 1234-5678'
+      }
     },
     {
       id: 2,
@@ -125,6 +145,14 @@ const DashboardContainer = () => {
     ]
   };
 
+  const handleVerDetallesViaje = () => {
+    setMostrarDetallesViaje(true);
+  };
+
+  const handleCerrarDetalles = () => {
+    setMostrarDetallesViaje(false);
+  };
+
   return (
     <DashboardPresentation
       // Estado
@@ -136,6 +164,11 @@ const DashboardContainer = () => {
       
       // Datos del usuario
       datosUsuario={datosUsuario}
+      
+      // Modal del próximo viaje
+      mostrarDetallesViaje={mostrarDetallesViaje}
+      onVerDetallesViaje={handleVerDetallesViaje}
+      onCerrarDetalles={handleCerrarDetalles}
     />
   );
 };

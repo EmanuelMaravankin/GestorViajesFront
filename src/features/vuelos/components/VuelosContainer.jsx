@@ -8,6 +8,7 @@ const VuelosContainer = () => {
     loading,
     error,
     buscarVuelos,
+    cargarTodosLosVuelos,
     aplicarFiltros,
     toggleFavorito,
     esFavorito,
@@ -21,8 +22,26 @@ const VuelosContainer = () => {
 
   // Manejar búsqueda de vuelos
   const handleBuscarVuelos = async (parametros) => {
-    setParametrosBusqueda(parametros);
-    await buscarVuelos(parametros);
+    // Si no hay parámetros válidos o están vacíos, cargar todos los vuelos
+    if (!parametros || 
+        !parametros.origen || 
+        !parametros.destino || 
+        parametros.origen.trim() === '' || 
+        parametros.destino.trim() === '') {
+      setParametrosBusqueda({ mostrarTodos: true });
+      await cargarTodosLosVuelos();
+    } else {
+      setParametrosBusqueda(parametros);
+      await buscarVuelos(parametros);
+    }
+    
+    setMostrarFiltros(true);
+  };
+
+  // Cargar todos los vuelos disponibles
+  const handleCargarTodosVuelos = async () => {
+    setParametrosBusqueda({ mostrarTodos: true }); // Indicador para mostrar todos
+    await cargarTodosLosVuelos();
     setMostrarFiltros(true);
   };
 
@@ -69,6 +88,7 @@ const VuelosContainer = () => {
       
       // Acciones
       onBuscarVuelos={handleBuscarVuelos}
+      onCargarTodosVuelos={handleCargarTodosVuelos}
       onFiltrosChange={handleFiltrosChange}
       onSeleccionarVuelo={handleSeleccionarVuelo}
       onToggleFavorito={handleToggleFavorito}

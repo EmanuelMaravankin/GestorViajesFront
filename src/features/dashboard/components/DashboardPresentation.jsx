@@ -11,7 +11,10 @@ const DashboardPresentation = ({
   estadisticas,
   datosGraficos,
   loading,
-  datosUsuario
+  datosUsuario,
+  mostrarDetallesViaje,
+  onVerDetallesViaje,
+  onCerrarDetalles
 }) => {
   const formatPrice = (price) => {
     if (!price) return '$0';
@@ -125,7 +128,11 @@ const DashboardPresentation = ({
                   <span>{formatDate(estadisticas?.proximoViaje?.fechaViaje)}</span>
                 </p>
               </div>
-              <Button variant="primary" size="sm">
+              <Button 
+                variant="primary" 
+                size="sm"
+                onClick={onVerDetallesViaje}
+              >
                 Ver Detalles
               </Button>
             </div>
@@ -270,6 +277,181 @@ const DashboardPresentation = ({
             </Card>
           </div>
         </div>
+
+        {/* Modal de detalles del próximo viaje */}
+        {mostrarDetallesViaje && estadisticas?.proximoViaje && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900">Detalles del Próximo Viaje</h2>
+                  <button 
+                    onClick={onCerrarDetalles}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <span className="text-2xl">×</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Información del vuelo */}
+                  <div className="space-y-6">
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
+                        ✈️ Información del Vuelo
+                      </h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-blue-700">Aerolínea:</span>
+                          <span className="font-medium text-blue-900">{estadisticas.proximoViaje.aerolinea || 'Iberia'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-blue-700">Número de vuelo:</span>
+                          <span className="font-medium text-blue-900">{estadisticas.proximoViaje.numeroVuelo || 'IB6789'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-blue-700">Código de reserva:</span>
+                          <span className="font-medium text-blue-900 font-mono">{estadisticas.proximoViaje.codigoReserva || 'IB78945612'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-blue-700">Asiento:</span>
+                          <span className="font-medium text-blue-900">{estadisticas.proximoViaje.asiento || '12A'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <h3 className="font-semibold text-green-900 mb-3 flex items-center">
+                        🕒 Horarios y Duración
+                      </h3>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="text-green-700 text-sm">Salida</p>
+                            <p className="font-bold text-green-900">{estadisticas.proximoViaje.horaSalida || '22:45'}</p>
+                            <p className="text-green-600 text-xs">{formatDate(estadisticas.proximoViaje.fechaViaje)}</p>
+                          </div>
+                          <div className="text-center">
+                            <div className="flex items-center">
+                              <div className="w-8 h-px bg-green-300"></div>
+                              <span className="text-green-600 mx-2">✈️</span>
+                              <div className="w-8 h-px bg-green-300"></div>
+                            </div>
+                            <p className="text-green-600 text-xs mt-1">{estadisticas.proximoViaje.duracion || '16h 35m'}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-green-700 text-sm">Llegada</p>
+                            <p className="font-bold text-green-900">{estadisticas.proximoViaje.horaLlegada || '15:20'}</p>
+                            <p className="text-green-600 text-xs">Día siguiente</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-yellow-50 p-4 rounded-lg">
+                      <h3 className="font-semibold text-yellow-900 mb-3 flex items-center">
+                        🧳 Equipaje y Servicios
+                      </h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-yellow-700">Equipaje incluido:</span>
+                          <span className="font-medium text-yellow-900">{estadisticas.proximoViaje.equipaje || '1 maleta incluida'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-yellow-700">Escalas:</span>
+                          <span className="font-medium text-yellow-900">{estadisticas.proximoViaje.escalas || 'Directo'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-yellow-700">Total pagado:</span>
+                          <span className="font-bold text-yellow-900 text-lg">{formatPrice(estadisticas.proximoViaje.montoTotal)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Información del pasajero y aeropuertos */}
+                  <div className="space-y-6">
+                    <div className="bg-purple-50 p-4 rounded-lg">
+                      <h3 className="font-semibold text-purple-900 mb-3 flex items-center">
+                        👤 Información del Pasajero
+                      </h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-purple-700">Nombre:</span>
+                          <span className="font-medium text-purple-900">
+                            {estadisticas.proximoViaje.pasajero?.nombre || 'Ivan Agustin'} {estadisticas.proximoViaje.pasajero?.apellido || 'Zarate'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-purple-700">DNI:</span>
+                          <span className="font-medium text-purple-900">{estadisticas.proximoViaje.pasajero?.dni || '12345678'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-purple-700">Email:</span>
+                          <span className="font-medium text-purple-900">{estadisticas.proximoViaje.pasajero?.email || 'ivan.agustin.95@gmail.com'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-purple-700">Teléfono:</span>
+                          <span className="font-medium text-purple-900">{estadisticas.proximoViaje.pasajero?.telefono || '+54 11 1234-5678'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-indigo-50 p-4 rounded-lg">
+                      <h3 className="font-semibold text-indigo-900 mb-3 flex items-center">
+                        🏢 Aeropuertos
+                      </h3>
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-indigo-700 text-sm font-medium">Salida</p>
+                          <p className="text-indigo-900 font-semibold">{estadisticas.proximoViaje.origen}</p>
+                          <p className="text-indigo-600 text-xs">{estadisticas.proximoViaje.aeropuertoSalida || 'Aeropuerto Internacional Ezeiza (EZE)'}</p>
+                        </div>
+                        <div className="border-t border-indigo-200 pt-3">
+                          <p className="text-indigo-700 text-sm font-medium">Llegada</p>
+                          <p className="text-indigo-900 font-semibold">{estadisticas.proximoViaje.destino}</p>
+                          <p className="text-indigo-600 text-xs">{estadisticas.proximoViaje.aeropuertoLlegada || 'Aeropuerto Adolfo Suárez Madrid-Barajas (MAD)'}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                        ⏰ Recordatorios
+                      </h3>
+                      <div className="space-y-2 text-sm text-gray-700">
+                        <div className="flex items-start">
+                          <span className="text-orange-500 mr-2">⚠️</span>
+                          <span>Llegar al aeropuerto 3 horas antes para vuelos internacionales</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="text-blue-500 mr-2">📋</span>
+                          <span>Verificar documentación necesaria para ingresar a España</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="text-green-500 mr-2">✓</span>
+                          <span>Check-in online disponible 24 horas antes del vuelo</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex justify-end space-x-3">
+                  <button
+                    onClick={onCerrarDetalles}
+                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                  >
+                    Cerrar
+                  </button>
+                  <button className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    Descargar Boarding Pass
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

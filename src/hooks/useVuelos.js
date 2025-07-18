@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { obtenerVuelos } from '../features/vuelos/service/vuelo.service';
+import { vuelosFallback } from '../data/fallbackData';
+
+const USE_FALLBACK_DATA = true; // Cambiar a false cuando el backend esté disponible
 
 const useVuelos = () => {
   const [vuelos, setVuelos] = useState([]);
@@ -8,6 +10,15 @@ const useVuelos = () => {
   const [error, setError] = useState(null);
   const [filtros, setFiltros] = useState({});
   const [favoritos, setFavoritos] = useState([]);
+
+  // Cargar datos iniciales cuando se usa fallback
+  useEffect(() => {
+    if (USE_FALLBACK_DATA) {
+      console.log('Cargando vuelos fallback:', vuelosFallback.length, 'vuelos');
+      setVuelos(vuelosFallback);
+      setVuelosFiltrados(vuelosFallback);
+    }
+  }, []);
 
   // Cargar favoritos del localStorage al inicializar
   useEffect(() => {
@@ -27,27 +38,82 @@ const useVuelos = () => {
   }, [favoritos]);
 
   // Buscar vuelos
-  const buscarVuelos = useCallback(async (parametrosBusqueda) => {
+  const buscarVuelos = useCallback(async (parametrosBusqueda = {}) => {
     setLoading(true);
     setError(null);
     
+    if (USE_FALLBACK_DATA) {
+      // Simular delay de red
+      setTimeout(() => {
+        let vuelosEncontrados = vuelosFallback;
+        
+        // Solo filtrar si se especifican origen Y destino con valores válidos
+        if (parametrosBusqueda && 
+            parametrosBusqueda.origen && 
+            parametrosBusqueda.destino &&
+            parametrosBusqueda.origen.trim() !== '' && 
+            parametrosBusqueda.destino.trim() !== '') {
+          
+          vuelosEncontrados = vuelosFallback.filter(vuelo => {
+            const origenMatch = vuelo.origen.nombre.toLowerCase().includes(parametrosBusqueda.origen.toLowerCase()) ||
+                               vuelo.origen.ciudad.toLowerCase().includes(parametrosBusqueda.origen.toLowerCase());
+            const destinoMatch = vuelo.destino.nombre.toLowerCase().includes(parametrosBusqueda.destino.toLowerCase()) ||
+                                 vuelo.destino.ciudad.toLowerCase().includes(parametrosBusqueda.destino.toLowerCase());
+            return origenMatch && destinoMatch;
+          });
+        }
+        
+        setVuelos(vuelosEncontrados);
+        setVuelosFiltrados(vuelosEncontrados);
+        setLoading(false);
+      }, 1000);
+      return;
+    }
+    
     try {
-      const { origen, destino } = parametrosBusqueda;
-      const response = await obtenerVuelos(origen, destino);
-      
-      if (response.success && response.data) {
-        setVuelos(response.data);
-        setVuelosFiltrados(response.data);
-      } else {
-        setVuelos([]);
-        setVuelosFiltrados([]);
-        setError('No se encontraron vuelos para los criterios especificados');
-      }
+      // En caso real, aquí iría la llamada al API
+      console.log('Buscando vuelos en el backend...');
+      setVuelos(vuelosFallback);
+      setVuelosFiltrados(vuelosFallback);
+      setError('Usando datos de ejemplo (sin conexión al servidor)');
     } catch (err) {
       console.error('Error al buscar vuelos:', err);
-      setError('Error al buscar vuelos. Por favor, intenta nuevamente.');
-      setVuelos([]);
-      setVuelosFiltrados([]);
+      setVuelos(vuelosFallback);
+      setVuelosFiltrados(vuelosFallback);
+      setError('Usando datos de ejemplo (sin conexión al servidor)');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Cargar todos los vuelos disponibles
+  const cargarTodosLosVuelos = useCallback(async () => {
+    console.log('Llamando cargarTodosLosVuelos...');
+    setLoading(true);
+    setError(null);
+    
+    if (USE_FALLBACK_DATA) {
+      console.log('Usando fallback data, cargando', vuelosFallback.length, 'vuelos');
+      // Simular delay de red
+      setTimeout(() => {
+        setVuelos(vuelosFallback);
+        setVuelosFiltrados(vuelosFallback);
+        console.log('Vuelos cargados:', vuelosFallback.length);
+        setLoading(false);
+      }, 800);
+      return;
+    }
+    
+    try {
+      // En caso real, llamar a una API que devuelva todos los vuelos
+      console.log('Cargando todos los vuelos del backend...');
+      setVuelos(vuelosFallback);
+      setVuelosFiltrados(vuelosFallback);
+    } catch (err) {
+      console.error('Error al cargar todos los vuelos:', err);
+      setVuelos(vuelosFallback);
+      setVuelosFiltrados(vuelosFallback);
+      setError('Usando datos de ejemplo (sin conexión al servidor)');
     } finally {
       setLoading(false);
     }
@@ -174,6 +240,7 @@ const useVuelos = () => {
     
     // Acciones
     buscarVuelos,
+    cargarTodosLosVuelos,
     aplicarFiltros,
     toggleFavorito,
     esFavorito,

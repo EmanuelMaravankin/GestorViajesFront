@@ -18,6 +18,7 @@ const VuelosPresentation = ({
   
   // Acciones
   onBuscarVuelos,
+  onCargarTodosVuelos,
   onFiltrosChange,
   onSeleccionarVuelo,
   onToggleFavorito,
@@ -42,19 +43,20 @@ const VuelosPresentation = ({
         <Card className="mb-6">
           <SearchForm
             onSearch={onBuscarVuelos}
+            onShowAll={onCargarTodosVuelos}
             loading={loading}
             initialValues={parametrosBusqueda}
           />
         </Card>
 
         {/* Resultados */}
-        {parametrosBusqueda && (
+        {(parametrosBusqueda || vuelos.length > 0) && (
           <div className="space-y-6">
             {/* Header de resultados */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">
-                  Resultados de búsqueda
+                  {parametrosBusqueda?.mostrarTodos ? 'Todos los vuelos disponibles' : 'Resultados de búsqueda'}
                 </h2>
                 {estadisticas && (
                   <p className="text-sm text-gray-600">

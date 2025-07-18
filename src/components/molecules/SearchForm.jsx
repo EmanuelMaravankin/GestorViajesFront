@@ -4,6 +4,7 @@ import Button from '../atoms/Button';
 
 const SearchForm = ({ 
   onSearch, 
+  onShowAll,
   loading = false, 
   initialValues = {},
   fields = [],
@@ -34,23 +35,26 @@ const SearchForm = ({
     }
   };
 
-  const validateForm = () => {
+  const validateForm = (requireFields = true) => {
     const newErrors = {};
 
-    if (!formData.origen.trim()) {
-      newErrors.origen = 'El origen es requerido';
-    }
+    // Solo validar campos si requireFields es true
+    if (requireFields) {
+      if (!formData.origen.trim()) {
+        newErrors.origen = 'El origen es requerido';
+      }
 
-    if (!formData.destino.trim()) {
-      newErrors.destino = 'El destino es requerido';
+      if (!formData.destino.trim()) {
+        newErrors.destino = 'El destino es requerido';
+      }
+
+      if (!formData.fechaSalida) {
+        newErrors.fechaSalida = 'La fecha de salida es requerida';
+      }
     }
 
     if (formData.origen === formData.destino && formData.origen !== '') {
       newErrors.destino = 'El destino debe ser diferente al origen';
-    }
-
-    if (!formData.fechaSalida) {
-      newErrors.fechaSalida = 'La fecha de salida es requerida';
     }
 
     if (formData.pasajeros < 1 || formData.pasajeros > 9) {
@@ -64,8 +68,26 @@ const SearchForm = ({
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Si no hay origen y destino, mostrar todos los vuelos
+    if (!formData.origen.trim() && !formData.destino.trim()) {
+      if (typeof onShowAll === 'function') {
+        onShowAll();
+      } else if (typeof onSearch === 'function') {
+        onSearch(formData);
+      }
+      return;
+    }
+
+    // Validación normal si hay campos completados
     if (validateForm() && typeof onSearch === 'function') {
       onSearch(formData);
+    }
+  };
+
+  // Manejar botón "Ver todos los vuelos"
+  const handleShowAll = () => {
+    if (typeof onShowAll === 'function') {
+      onShowAll();
     }
   };
 
@@ -74,22 +96,20 @@ const SearchForm = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           name="origen"
-          label="Origen"
+          label="Origen (opcional para ver todos)"
           placeholder="Ej: Buenos Aires (EZE)"
           value={formData.origen}
           onChange={handleChange}
           error={errors.origen}
-          required
         />
 
         <Input
           name="destino"
-          label="Destino"
+          label="Destino (opcional para ver todos)"
           placeholder="Ej: Miami (MIA)"
           value={formData.destino}
           onChange={handleChange}
           error={errors.destino}
-          required
         />
       </div>
 
@@ -97,11 +117,10 @@ const SearchForm = ({
         <Input
           type="date"
           name="fechaSalida"
-          label="Fecha de Salida"
+          label="Fecha de Salida (opcional)"
           value={formData.fechaSalida}
           onChange={handleChange}
           error={errors.fechaSalida}
-          required
         />
 
         <Input
@@ -125,14 +144,26 @@ const SearchForm = ({
         />
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex flex-col sm:flex-row justify-center gap-3">
         <Button
           type="submit"
           disabled={loading}
-          className="w-full md:w-auto px-8"
+          className="w-full sm:w-auto px-8"
         >
           {loading ? 'Buscando...' : 'Buscar Vuelos'}
         </Button>
+        
+        {onShowAll && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleShowAll}
+            disabled={loading}
+            className="w-full sm:w-auto px-8"
+          >
+            Ver Todos los Vuelos
+          </Button>
+        )}
       </div>
     </form>
   );
